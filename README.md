@@ -1,4 +1,4 @@
-## 田湾辐射分区厂房房间可视化Demo
+## 田湾辐射分区厂房房间可视化
 
 ### 使用的vuelayers + iview 详情参考 <a href='https://vuelayers.github.io/#/'>vuelayers</a> && <a href='https://www.iviewui.com/'>iview</a>
 - 如何测试该demo?
