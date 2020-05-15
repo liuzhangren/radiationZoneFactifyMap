@@ -4,7 +4,7 @@
 - 如何测试该demo?
 
   - 安装依赖 `yarn || npm install`
-  - 运行项目 `yarn serve || npm run servd`
+  - 运行项目 `yarn serve || npm run serve`
 
 
 - 代码构建?
