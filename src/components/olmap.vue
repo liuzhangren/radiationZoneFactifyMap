@@ -58,12 +58,12 @@
 </template>
 
 <script>
-  // import VueLayers from 'vuelayers'
   import * as olExt from 'vuelayers/lib/ol-ext'
   import container from '../assets/外框.png'
   // import img from '../assets/room1.jpg'
   import img from '../assets/资源 3.svg'
   import dataSource from './dataSource'
+
   let size = [1024, 968]
   let extent = [0, 0, ...size]
   let customProj = olExt.createProj({
@@ -72,7 +72,6 @@
     extent,
   })
   olExt.addProj(customProj)
-  // document.getElementById('stage').onmousewheel=function() {return false}
   export default {
     name: 'Map',
     data () {
@@ -114,8 +113,6 @@
       }
     },
     mounted() {
-      // this.clientWidth = document.body.clientWidth
-      // this. clientHeight =  document.body.clientHeight
       const obj = JSON.parse(localStorage.getItem('type1'))
       if(obj) {
         this.data = obj
@@ -136,19 +133,11 @@
           temp[c].extra = obj[c].extra
         })
         this.dataSource = Object.values(temp)
-        // debugger
       }else {
         localStorage.setItem('type1', JSON.stringify({}))
       }
     },
-    // created() {
-    // },
     methods: {
-      // handleScroll(e) {
-      //   // console.log(e)
-      //   // return false
-      //   e.preventDefault()
-      // },
       showModal(i) {
         this.modal1 = true
         this.currentClickedRoomNo = i
@@ -175,17 +164,17 @@
         this.colorPicker = item[0].color
         this.formInline.radiationZone = item[0].color
       },
+      //选择颜色
       colorPickerChange(hex) {
         this.formInline.radiationZone = hex;
-        // this.dataSource[this.currentClickedRoomNo].color = hex
       },
+      //禁止鼠标滚轮缩放地图
       mapChange(e) {
-        // console.log('hello world', e)
-        //禁止鼠标滚轮缩放地图
         e.map.on('wheel', function () {
           return false
         })
       },
+      //底图缩放 重新计算覆盖物的宽高
       onMoveend(e) {
         var zoom = e.map.getView().getZoom();
         if(this.currentZoom < zoom) {
@@ -269,7 +258,7 @@
         }
       },
       cancel() {
-        // this.$Message.info('Clicked cancel');
+
       },
     }
   }
