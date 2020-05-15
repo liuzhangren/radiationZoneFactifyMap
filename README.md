@@ -1,7 +1,7 @@
 ## 田湾辐射分区厂房房间可视化Demo
 
-### 使用的vuelayers + iview 详情参考 <a href='https://vuelayers.github.io/#/'>vuelayer</a> && <a href='https://www.iviewui.com/'>iview</a>
-- 如何使用?
+### 使用的vuelayers + iview 详情参考 <a href='https://vuelayers.github.io/#/'>vuelayers</a> && <a href='https://www.iviewui.com/'>iview</a>
+- 如何测试该demo?
 
   - 安装依赖 `yarn || npm install`
   - 运行项目 `yarn serve || npm run servd`
@@ -20,6 +20,6 @@
   - 覆盖物（厂房房间的坐标在dataSource中，需要一点点去调整，目前没有对应坐标和px的换算）
   - 提交按钮事件未绑定 需要自己取localstorage中的type1字段进行提交
   - 底图替换在 vl-source-image-static 标签对中的url
-  - 覆盖物的图片替换即为overlay中的img标签，如果需要一一对应则在dataSource中添加对应图拍呢url关系
+  - 覆盖物的图片替换即为overlay中的img标签，如果需要一一对应则在dataSource中添加对应图片url进行遍历
   - 大致功能具备，数据结构和具体业务场景需要具体定制
-  - 用的vue 迁移样式可自定义
+  - 用的vue,迁移样式可自定义
