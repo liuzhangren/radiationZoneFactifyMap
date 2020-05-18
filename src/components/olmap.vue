@@ -1,60 +1,61 @@
 <template>
-  <div id='box'>
-    <vl-map id="stage" @movestart="mapChange" :load-tiles-while-animating="true" :load-tiles-while-interacting="true" style="width:100%" @moveend="onMoveend">
-      <vl-view :projection="projection" :zoom.sync="zoom" :center.sync="center" :rotation.sync="rotation"></vl-view>
-      <vl-layer-image id="xkcd">
-        <vl-source-image-static 
-          :url="imgUrl" 
-          :size="imgSize" 
-          :extent="imgExtent" 
-          :projection="projection"
-        >
-        </vl-source-image-static>
-      </vl-layer-image>
-      <template>
-        <vl-overlay auto-pan v-for="(item, index) in dataSource" :key="index" :id="`overlay${index}`" :position="[item.x, item.y]">
-            <Poptip trigger="hover" title="房间信息">
-              <div slot="content" class="poptipExplain">
-                <p>房间编号: {{item.roomNo?item.roomNo:'暂无'}}</p>
-                <p>房间名称: {{item.roomName?item.roomName:'暂无'}}</p>
-                <p>备注: {{item.extra?item.extra:'暂无'}}</p>
-              </div>
-                <img  @click="showModal(item.id)" :style="{backgroundColor: `${item.color}`, backgroundSize: '100% 100%', display:'block'}" :src="img" :width="item.imgW" :height="item.imgH">
-            </Poptip>
-        </vl-overlay>
-      </template>
-      <template>
-        <Modal
-          v-model="modal1"
-          title="编辑房间信息"
-          @on-cancel="cancel"
-          cancel-text='取消'
-        >
-          <div slot="footer">
-            <Button type="primary" @click="ok">保存</Button>
-          </div>
-          <Form ref="formInline" :model="formInline" :rules="ruleInline">
-            <FormItem  label="辐射分区:" prop="radiationZone">
-                <ColorPicker @on-change="colorPickerChange" v-model="colorPicker" />
-            </FormItem>
-            <FormItem  label="房间编号:" prop="roomNo">
-              <i-input type="text" v-model="formInline.roomNo" placeholder="请输入房间编号">
-              </i-input>
-            </FormItem>
-            <FormItem  label="房间名称:" prop="roomName">
-              <i-input type="text" v-model="formInline.roomName" placeholder="请输入房间名称">
-              </i-input>
-            </FormItem>
-            <FormItem  label="备注:" prop="extra">
-              <i-input type="text" v-model="formInline.extra" placeholder="请输入备注信息">
-              </i-input>
-            </FormItem>
-        </Form>
-        </Modal>
-      </template>
-    </vl-map>
-    <Button style='position: fixed; bottom: 14px; right: 14px' type="primary">提交</Button>
-  </div>
+    <div id='box'>
+      <Spin size="large" fix v-if="spinShow"></Spin>
+      <vl-map id="stage" :controls="false" @movestart="mapChange" :load-tiles-while-animating="true" :load-tiles-while-interacting="true" style="width:100%" @moveend="onMoveend">
+        <vl-view :projection="projection" :zoom.sync="zoom" :center.sync="center" :rotation.sync="rotation"></vl-view>
+        <vl-layer-image id="xkcd">
+          <vl-source-image-static 
+            :url="imgUrl" 
+            :size="imgSize" 
+            :extent="imgExtent" 
+            :projection="projection"
+          >
+          </vl-source-image-static>
+        </vl-layer-image>
+        <template>
+          <vl-overlay auto-pan v-for="(item, index) in dataSource" :key="index" :id="`overlay${index}`" :position="[item.x, item.y]">
+              <Poptip trigger="hover" title="房间信息">
+                <div slot="content" class="poptipExplain">
+                  <p>房间编号: {{item.roomNo?item.roomNo:'暂无'}}</p>
+                  <p>房间名称: {{item.roomName?item.roomName:'暂无'}}</p>
+                  <p>备注: {{item.extra?item.extra:'暂无'}}</p>
+                </div>
+                <img @click="showModal(item.id)" :style="{ backgroundColor: `${item.color}`, objectFit: 'cover'}" :src="img" :width="item.imgW" />
+              </Poptip>
+          </vl-overlay>
+        </template>
+        <template>
+          <Modal
+            v-model="modal1"
+            title="编辑房间信息"
+            @on-cancel="cancel"
+            cancel-text='取消'
+          >
+            <div slot="footer">
+              <Button type="primary" @click="ok">保存</Button>
+            </div>
+            <Form ref="formInline" :model="formInline" :rules="ruleInline">
+              <FormItem  label="辐射分区:" prop="radiationZone">
+                  <ColorPicker @on-change="colorPickerChange" v-model="colorPicker" />
+              </FormItem>
+              <FormItem  label="房间编号:" prop="roomNo">
+                <i-input type="text" v-model="formInline.roomNo" placeholder="请输入房间编号">
+                </i-input>
+              </FormItem>
+              <FormItem  label="房间名称:" prop="roomName">
+                <i-input type="text" v-model="formInline.roomName" placeholder="请输入房间名称">
+                </i-input>
+              </FormItem>
+              <FormItem  label="备注:" prop="extra">
+                <i-input type="text" v-model="formInline.extra" placeholder="请输入备注信息">
+                </i-input>
+              </FormItem>
+          </Form>
+          </Modal>
+        </template>
+      </vl-map>
+      <Button style='position: fixed; bottom: 14px; right: 14px' type="primary">提交</Button>
+    </div>
 </template>
 
 <script>
@@ -79,6 +80,7 @@
         img,
         dataSource,
         modal1: false,
+        spinShow: false,
         data: {},
         currentClickedRoomNo: 0,
         colorPicker: '',
@@ -176,50 +178,65 @@
       },
       //底图缩放 重新计算覆盖物的宽高
       onMoveend(e) {
-        var zoom = e.map.getView().getZoom();
-        if(this.currentZoom < zoom) {
-          this.currentZoom = zoom;
-          this.dataSource = this.dataSource.reduce((r, c) => {
-            return [
-              ...r,
-              {
-                x: c.x,
-                y: c.y,
-                id: c.id,
-                radiationZone: c.radiationZone,
-                roomNo: c.roomNo,
-                roomName: c.roomName,
-                extra: c.extra,
-                divW: c.divW*2,
-                divH: c.divH*2,
-                imgW: c.imgW*2,
-                imgH: c.imgH*2,
-                color: c.color
-              }
-            ]
-          }, [])
-        }else if (this.currentZoom > zoom) {
-          this.currentZoom = zoom;
-          this.dataSource = this.dataSource.reduce((r, c) => {
-            return [
-              ...r,
-              {
-                x: c.x,
-                y: c.y,
-                id: c.id,
-                radiationZone: c.radiationZone,
-                roomNo: c.roomNo,
-                roomName: c.roomName,
-                extra: c.extra,
-                divW: c.divW/2,
-                divH: c.divH/2,
-                imgW: c.imgW/2,
-                imgH: c.imgH/2,
-                color: c.color
-              }
-            ]
-          }, [])
+        const f1 = () => {
+          var zoom = e.map.getView().getZoom();
+          if(this.currentZoom < zoom) {
+            this.currentZoom = zoom;
+            this.dataSource = this.dataSource.reduce((r, c) => {
+              return [
+                ...r,
+                {
+                  x: c.x,
+                  y: c.y,
+                  id: c.id,
+                  radiationZone: c.radiationZone,
+                  roomNo: c.roomNo,
+                  roomName: c.roomName,
+                  extra: c.extra,
+                  divW: c.divW*2,
+                  divH: c.divH*2,
+                  imgW: c.imgW*2,
+                  imgH: c.imgH*2,
+                  color: c.color
+                }
+              ]
+            }, [])
+          }else if (this.currentZoom > zoom) {
+            this.currentZoom = zoom;
+            this.dataSource = this.dataSource.reduce((r, c) => {
+              return [
+                ...r,
+                {
+                  x: c.x,
+                  y: c.y,
+                  id: c.id,
+                  radiationZone: c.radiationZone,
+                  roomNo: c.roomNo,
+                  roomName: c.roomName,
+                  extra: c.extra,
+                  divW: c.divW/2,
+                  divH: c.divH/2,
+                  imgW: c.imgW/2,
+                  imgH: c.imgH/2,
+                  color: c.color
+                }
+              ]
+            }, [])
+          }
         }
+        this.spinShow = true
+        const promise = new Promise((resolve, reject) => {
+          setTimeout(function(){
+            f1()
+            resolve('success');
+          }, 1000);
+        })
+        promise.then((res) => {
+          if(res) {
+            // debugger
+            this.spinShow = false
+          }
+        })
       },
       ok() {
         if(this.formInline.roomNo === '' || this.formInline.roomName === '' || this.formInline.radiationZone==='') {
@@ -279,6 +296,7 @@
 .ol-control button{
   width: 2.1em !important ;
   height: 2.1em !important ;
+  /* display: none !important; */
 }
 .btnGroup{
   margin-top: 20px;
