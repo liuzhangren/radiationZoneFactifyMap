@@ -108,7 +108,7 @@
         currentZoom: 1,
         zoom: 1,
         maxZoom: 3,
-        minZoom: 1,
+        minZoom: 0,
         center: [size[0] / 2, size[1] / 2],
         rotation: 0,
         projection: customProj.getCode(),
