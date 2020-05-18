@@ -1,8 +1,12 @@
 <template>
-    <div id='box'>
-      <Spin size="large" fix v-if="spinShow"></Spin>
-      <vl-map id="stage" :controls="false" @movestart="mapChange" :load-tiles-while-animating="true" :load-tiles-while-interacting="true" style="width:100%" @moveend="onMoveend">
-        <vl-view :projection="projection" :zoom.sync="zoom" :center.sync="center" :rotation.sync="rotation"></vl-view>
+    <div id='box' >
+      <!-- <Spin size="large" fix v-if="spinShow"></Spin> -->
+      <div class="zoomBtn">
+        <Button style="marginRight: 4px" type="primary" @click="plus"> + </Button>
+        <Button type="primary" @click="decrease"> - </Button>
+      </div>
+      <vl-map id="stage" @movestart="mapChange" :load-tiles-while-animating="true" :load-tiles-while-interacting="true" style="width:100%" @moveend="onMoveend">
+        <vl-view :max-zoom="maxZoom" :min-zoom="minZoom" :projection="projection" :zoom.sync="zoom" :center.sync="center" :rotation.sync="rotation"></vl-view>
         <vl-layer-image id="xkcd">
           <vl-source-image-static 
             :url="imgUrl" 
@@ -103,7 +107,7 @@
         },
         currentZoom: 1,
         zoom: 1,
-        maxZoom: 4,
+        maxZoom: 3,
         minZoom: 1,
         center: [size[0] / 2, size[1] / 2],
         rotation: 0,
@@ -138,8 +142,20 @@
       }else {
         localStorage.setItem('type1', JSON.stringify({}))
       }
+      console.log('hello', document.getElementsByClassName('ol-zoom-in').item(0))
     },
     methods: {
+      plus() {
+        const zoom = this.map.getView().getZoom();
+        this.map.getView().setCenter(this.center)
+        this.zoom = zoom + 1
+        // debugger
+      },
+      decrease() {
+        const zoom = this.map.getView().getZoom();
+        this.map.getView().setCenter(this.center)
+        this.zoom = zoom - 1
+      },
       showModal(i) {
         this.modal1 = true
         this.currentClickedRoomNo = i
@@ -175,9 +191,17 @@
         e.map.on('wheel', function () {
           return false
         })
+        this.map = e.map
+        // e.map.removeInteraction(dbClick);
+        // e.map.on('doubleClic', function () {
+        //   return false
+        // })
       },
       //底图缩放 重新计算覆盖物的宽高
       onMoveend(e) {
+        // e.map.getView().on("change:resolution", function (ev) { 
+        //   console.log()
+        // });
         const f1 = () => {
           var zoom = e.map.getView().getZoom();
           if(this.currentZoom < zoom) {
@@ -224,19 +248,19 @@
             }, [])
           }
         }
-        this.spinShow = true
-        const promise = new Promise((resolve, reject) => {
-          setTimeout(function(){
-            f1()
-            resolve('success');
-          }, 1000);
-        })
-        promise.then((res) => {
-          if(res) {
-            // debugger
-            this.spinShow = false
-          }
-        })
+        f1()
+        // const promise = new Promise((resolve, reject) => {
+        //   this.spinShow = true
+        //   setTimeout(function(){
+        //     f1()
+        //     resolve('success');
+        //   }, 750);
+        // })
+        // promise.then((res) => {
+        //   if(res) {
+        //     this.spinShow = false
+        //   }
+        // })
       },
       ok() {
         if(this.formInline.roomNo === '' || this.formInline.roomName === '' || this.formInline.radiationZone==='') {
@@ -296,7 +320,7 @@
 .ol-control button{
   width: 2.1em !important ;
   height: 2.1em !important ;
-  /* display: none !important; */
+  display: none !important;
 }
 .btnGroup{
   margin-top: 20px;
@@ -309,5 +333,28 @@
 #box {
   display: flex;
   justify-content: center;
+}
+.zoomBtn {
+  display: flex;
+  justify-content: start;
+  height: 50px;
+}
+.zoomBtn button {
+    display: block;
+    margin: 1px;
+    padding: 0;
+    color: white;
+    font-size: 1.14em;
+    font-weight: bold;
+    text-decoration: none;
+    text-align: center;
+    height: 1.375em;
+    width: 1.375em;
+    line-height: .4em;
+    background-color: rgba(0, 60, 136, 0.5);
+    border: none;
+    border-radius: 2px 2px 0 0;
+    width: 2.1em !important ;
+    height: 2.1em !important ;
 }
 </style>
