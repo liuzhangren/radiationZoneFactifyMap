@@ -1,8 +1,9 @@
+import img1 from '../assets/资源 3.svg'
 export default [
-  {id: 1 ,x: 100,y: 800, divW: 50, divH: 50, imgW: 50, imgH: 50, color: '' }, 
-  {id: 2 ,x: 100,y: 701, divW: 46, divH: 50, imgW: 50, imgH: 50, color: '' }, 
-  {id: 3 ,x: 100,y: 602, divW: 46, divH: 50, imgW: 50, imgH: 50, color: ''  }, 
-
+  {id: 1 ,x: 100,y: 800, divW: 50, divH: 50, imgW: 50, imgH: 50, color: '', src: img1  }, 
+  {id: 2 ,x: 100,y: 701, divW: 46, divH: 50, imgW: 50, imgH: 50, color: '' , src: img1 }, 
+  {id: 3 ,x: 100,y: 602, divW: 46, divH: 50, imgW: 50, imgH: 50, color: '', src: img1   }, 
+  {id: 4 ,x: 100,y: 503, divW: 46, divH: 50, imgW: 50, imgH: 50, color: '', src: img1  }, 
   // {id: 4 ,x: 4, y: 480, divW: 46, divH: 50, imgW: 50, imgH: 50, color: ''  }, 
   // {id: 5 ,x: 4, y: 350, divW: 23, divH: 140, imgW: 27, imgH: 140, color: ''  },
   // {id: 6 ,x: 50, y: 350, divW: 23, divH: 140, imgW: 27, imgH: 140, color: ''  },

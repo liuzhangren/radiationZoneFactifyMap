@@ -24,7 +24,7 @@
                   <p>房间名称: {{item.roomName?item.roomName:'暂无'}}</p>
                   <p>备注: {{item.extra?item.extra:'暂无'}}</p>
                 </div>
-                <img @click="showModal(item.id)" :style="{ backgroundColor: `${item.color}`, objectFit: 'cover'}" :src="img" :width="item.imgW" />
+                <img @click="showModal(item.id)" :style="{ backgroundColor: `${item.color}`, objectFit: 'cover'}" :src="item.src" :width="item.imgW" />
               </Poptip>
           </vl-overlay>
         </template>
